@@ -5,16 +5,18 @@ gem 'rails', '3.2.11'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'sqlite3', '1.3.8'
-#gem 'sqlite3-ruby', '1.2.5', :require => 'sqlite3'
-#gem 'sqlite3-ruby', '1.2.5', :group => :development
+#gem 'sqlite3', '1.3.8'
+gem 'sqlite3-ruby', '1.3.3', :require => 'sqlite3'
+#gem 'sqlite3-ruby', '1.3.3', :group => :development
+
 
 group :development do
-  gem 'rspec-rails', '2.5.0'
+  gem 'rspec-rails', '2.7.0'
+  gem 'annotate', '2.5.0'
 end
 
 group :test do
-  gem 'rspec', '2.5.0'
+  gem 'rspec', '2.7.0'
   #gem 'capybara', '2.1.0'
   gem 'webrat', '0.7.3'
 end
