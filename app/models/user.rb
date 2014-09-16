@@ -34,6 +34,7 @@ class User < ActiveRecord::Base
   	user = self.find_by_email(email)
   	return nil if user.nil?
   	return user if user.has_password?(password)
+    return nil
   end
 
   # Return true if the user's password matches the submitted password.
