@@ -69,25 +69,32 @@ describe UsersController do
   end
 
   describe "POST 'create'" do
-    before(:each) do
-      @attr = {:name => "", :email => "", :password => "", :password_confirmation => ""}
-    end
+    describe "failure" do
+      before(:each) do
+        @attr = {:name => "", :email => "", :password => "", :password_confirmation => ""}
+      end
 
-    it "should not create a new user" do
-      lambda do
+      it "should not create a new user" do
+        lambda do
+          post :create, :user => @attr
+        end.should_not change(User, :count)
+      end
+
+      it "should have the right title" do
         post :create, :user => @attr
-      end.should_not change(User, :count)
-    end
+        response.should have_selector("title", :content => "Sign up")
+      end
 
-    it "should have the right title" do
-      post :create, :user => @attr
-      response.should have_selector("title", :content => "Sign up")
-    end
+      it "should render the 'new' page" do
+        post :create, :user => @attr
+        response.should render_template('new')
+      end
 
-    it "should render the 'new' page" do
-      post :create, :user => @attr
-      response.should render_template('new')
-    end
+      it "should sign the user in" do
+        post :create, :user => @attr
+        controller.should_not be_signed_in
+      end
+    end 
 
     describe "success" do
       before(:each) do
@@ -109,6 +116,11 @@ describe UsersController do
       it "should have a welcome message" do
         post :create, :user => @attr
         flash[:success].should =~ /welcome to the sample app/i
+      end
+
+      it "should sign the user in" do
+        post :create, :user => @attr
+        controller.should be_signed_in
       end
     end
 
