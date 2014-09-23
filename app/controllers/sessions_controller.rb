@@ -1,4 +1,5 @@
 class SessionsController < ApplicationController
+  before_filter :unsign_in, :only => [:new, :create]
 
   def new
   	@title = "Sign in"
@@ -22,5 +23,9 @@ class SessionsController < ApplicationController
   	redirect_to root_path
   end
 
+  private
 
+    def unsign_in
+      redirect_to(user_path(current_user)) unless current_user.nil?
+    end
 end

@@ -2,6 +2,7 @@ class UsersController < ApplicationController
   before_filter :authenticate, :only => [:edit, :update, :index, :destroy]
   before_filter :correct_user, :only => [:edit, :update]
   before_filter :admin_user, :only => :destroy
+  before_filter :unsigned_in, :only => [:new, :create]
 
   def new
   	@user = User.new
@@ -45,8 +46,11 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    User.find(params[:id]).destroy
-    flash[:success] = "User destroyed."
+    @user = User.find(params[:id])
+    unless current_user?(@user)
+      @user.destroy
+      flash[:success] = "User destroyed."
+    end
     redirect_to users_path
   end
 
@@ -63,5 +67,9 @@ class UsersController < ApplicationController
 
     def admin_user
       redirect_to(root_path) unless current_user.admin?
+    end
+
+    def unsigned_in
+      redirect_to(user_path(current_user)) unless current_user.nil?
     end
 end

@@ -34,6 +34,14 @@ describe UsersController do
       get :new
       response.should have_selector("input[name='user[password_confirmation]'][type='password']")
     end
+
+    describe "for signed in user" do
+      it "should redirect to the user page" do
+        user = test_sign_in(Factory(:user))
+        get :new
+        response.should redirect_to(user_path(user))
+      end
+    end
   end
 
   describe "GET 'show" do
@@ -121,6 +129,16 @@ describe UsersController do
       it "should sign the user in" do
         post :create, :user => @attr
         controller.should be_signed_in
+      end
+    end
+
+    describe "for signed in user" do
+      it "should redirect to the root page" do
+        user = test_sign_in(Factory(:user))
+        attr = {:name => "New User", :email => "user@example.com", 
+          :password => "foobar", :password_confirmation => "foobar"}
+        post :create, :user => attr
+        response.should redirect_to(user_path(user))
       end
     end
 
@@ -272,6 +290,13 @@ describe UsersController do
         end
       end
 
+      it "non-admin should not have a delete link for any user" do
+        get :index
+        @users[0..2].each do |user|
+          response.should_not have_selector("a", :content => "delete")
+        end
+      end
+
       it "should paginate users" do
         get :index
         response.should have_selector("div.pagination")
@@ -280,6 +305,26 @@ describe UsersController do
                                            :content => "2")
         response.should have_selector("a", :href => "/users?page=2",
                                            :content => "Next")
+      end
+    end
+
+    describe "for signed in admin" do
+      before(:each) do
+        @admin = test_sign_in(Factory(:user, :admin => true))
+        second = Factory(:user, :email => "another@example.com")
+        third = Factory(:user, :email => "another@example.net")
+
+        @users = [@admin, second, third]
+        30.times do
+          @users << Factory(:user, :email => Factory.next(:email))
+        end
+      end
+
+      it "should have a delete link for any user" do
+        get :index
+        @users[0..2].each do |user|
+          response.should have_selector("a", :content => "delete")
+        end
       end
     end
   end
@@ -308,14 +353,20 @@ describe UsersController do
     describe "as a admin user" do
 
       before(:each) do
-        admin = Factory(:user, :email => "admin@example.com", :admin => true)
-        test_sign_in(admin)
+        @admin = Factory(:user, :email => "admin@example.com", :admin => true)
+        test_sign_in(@admin)
       end
 
       it "should destroy the user" do
         lambda do
           delete :destroy, :id => @user
         end.should change(User, :count).by(-1)
+      end
+
+      it "should not destroy the admin himself" do
+        lambda do
+          delete :destroy, :id => @admin
+        end.should_not change(User, :count)
       end
 
       it "should redirect to the users page" do
