@@ -43,6 +43,14 @@ module SessionsHelper
 		redirect_to(session[:return_to] || default)
 		clear_return_to
 	end
+	
+    def authenticate
+      deny_access unless signed_in?
+    end
+
+    def unsigned_in
+      redirect_to(user_path(current_user)) unless current_user.nil?
+    end
 
 	private
 		def store_return_to
