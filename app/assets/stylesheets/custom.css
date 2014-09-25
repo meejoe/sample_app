@@ -228,3 +228,11 @@ form.new_micropost textarea{
 	height: 4em;
 	margin-bottom: 0;
 }
+
+/* micropost jQuery countdown */
+
+.countdown {
+  display: inline;
+  padding-left: 30px;
+  color: $grayLight;
+}
