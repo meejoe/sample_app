@@ -73,8 +73,8 @@ describe "Microposts" do
 			                                 :content => "Next")
 		end
 
-		it "should have links to delete microposts created by the current user"
+		# it "should have links to delete microposts created by the current user"
 
-		it "should not have links to delete microposts not created by current user"
+		# it "should not have links to delete microposts not created by current user"
 	end
 end
